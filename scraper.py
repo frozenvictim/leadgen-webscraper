@@ -20,7 +20,7 @@ def scrape_yellow_pages(base_url, max_results=None):
     chrome_options.add_argument("--headless")  # Optional: startet Chrome im Headless-Modus (kein GUI)
 
     # Verwende die Service-Klasse, um den WebDriver zu starten
-    service = Service(r"C:\Users\Fabia\chromedriver.exe")  # Pfad zu deinem ChromeDriver
+    service = Service(r"C:\Users\chromedriver.exe")  # Pfad zu deinem ChromeDriver
     driver = webdriver.Chrome(service=service, options=chrome_options)  # Chrome starten
 
     driver.get(base_url)  # Seite laden
