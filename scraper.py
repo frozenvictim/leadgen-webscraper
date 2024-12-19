@@ -20,7 +20,7 @@ def scrape_yellow_pages(base_url, max_results=None):
     chrome_options.add_argument("--headless")  # Optional: startet Chrome im Headless-Modus (kein GUI)
 
     # Verwende die Service-Klasse, um den WebDriver zu starten
-    service = Service(r"C:\Users\chromedriver.exe")  # Pfad zu deinem ChromeDriver
+    service = Service(r"C:\Users\Fabia\chromedriver.exe")  # Pfad zu deinem ChromeDriver
     driver = webdriver.Chrome(service=service, options=chrome_options)  # Chrome starten
 
     driver.get(base_url)  # Seite laden
@@ -52,7 +52,13 @@ def scrape_yellow_pages(base_url, max_results=None):
             name = name.text.strip() if name else 'N/A'
             branche = branche.text.strip() if branche else 'N/A'
             phone = phone.text.strip() if phone else 'N/A'
-            address = address.text.strip() if address else 'N/A'
+
+            # Wenn keine Adresse vorhanden ist, verwende einen Platzhalter
+            if address:
+                address = address.text.strip()
+                cleaned_address = address.replace("\n", "").replace("\t", "").strip()
+            else:
+                cleaned_address = 'Keine Adresse verfügbar'  # Platzhalter für fehlende Adresse
 
             if website_tag and "data-webseitelink" in website_tag.attrs:
                 encoded_link = website_tag["data-webseitelink"]
@@ -60,8 +66,6 @@ def scrape_yellow_pages(base_url, max_results=None):
                 website = decoded_link.strip() if decoded_link else 'N/A'
             else:
                 website = 'N/A'
-
-            cleaned_address = address.replace("\n", "").replace("\t", "").strip()
 
             # Verhindern, dass doppelte Adressen hinzugefügt werden
             existing_entry = next((item for item in all_data if item['Addresse'] == cleaned_address), None)
@@ -110,6 +114,6 @@ def extract_city_code(url):
 
 if __name__ == "__main__":
     base_url = f"https://www.gelbeseiten.de/suche/stadt/bundesweit"
-    max_results = 1000  # Anzahl der maximalen Ergebnisse
+    max_results = 200  # Anzahl der maximalen Ergebnisse
     data = scrape_yellow_pages(base_url)
     save_to_csv(data, f"business_leads_{extract_city_code(base_url)}.csv")
